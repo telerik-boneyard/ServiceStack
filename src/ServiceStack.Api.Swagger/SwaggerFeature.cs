@@ -11,6 +11,8 @@ namespace ServiceStack.Api.Swagger
         /// </summary>
         public string ResourceFilterPattern { get; set; }
 
+        public bool PublishOnlyPublicApi { get; set; }
+
         public bool UseCamelCaseModelPropertyNames { get; set; }
 
         public bool UseLowercaseUnderscoreModelPropertyNames { get; set; }
@@ -22,6 +24,7 @@ namespace ServiceStack.Api.Swagger
             if (ResourceFilterPattern != null)
                 SwaggerResourcesService.resourceFilterRegex = new Regex(ResourceFilterPattern, RegexOptions.Compiled);
 
+            SwaggerApiService.PublishOnlyPublicApi = PublishOnlyPublicApi;
             SwaggerApiService.UseCamelCaseModelPropertyNames = UseCamelCaseModelPropertyNames;
             SwaggerApiService.UseLowercaseUnderscoreModelPropertyNames = UseLowercaseUnderscoreModelPropertyNames;
             SwaggerApiService.DisableAutoDtoInBodyParam = DisableAutoDtoInBodyParam;

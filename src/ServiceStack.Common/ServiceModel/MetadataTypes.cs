@@ -105,6 +105,7 @@ namespace ServiceStack.Common.ServiceModel
         public string Verbs { get; set; }
         public string Notes { get; set; }
         public string Summary { get; set; }
+        public bool IsPublic { get; set; }
     }
 
     public class MetadataDataContract

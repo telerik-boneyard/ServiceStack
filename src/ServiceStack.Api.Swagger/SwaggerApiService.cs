@@ -136,6 +136,7 @@ namespace ServiceStack.Api.Swagger
     [DefaultRequest(typeof(ResourceRequest))]
     public class SwaggerApiService : ServiceInterface.Service
     {
+        internal static bool PublishOnlyPublicApi { get; set; }
         internal static bool UseCamelCaseModelPropertyNames { get; set; }
         internal static bool UseLowercaseUnderscoreModelPropertyNames { get; set; }
         internal static bool DisableAutoDtoInBodyParam { get; set; }
@@ -164,7 +165,7 @@ namespace ServiceStack.Api.Swagger
             var meta = EndpointHost.Metadata;
             foreach (var key in map.Keys)
             {
-                paths.AddRange(map[key].Where(x => (x.Path == path || x.Path.StartsWith(path + "/") && meta.IsVisible(Request, Format.Json, x.RequestType.Name))));
+                paths.AddRange(map[key].Where(x => ShouldPublish(x) && (x.Path == path || x.Path.StartsWith(path + "/") && meta.IsVisible(Request, Format.Json, x.RequestType.Name))));
             }
 
             var models = new Dictionary<string, SwaggerModel>();
@@ -180,6 +181,11 @@ namespace ServiceStack.Api.Swagger
                 Apis = new List<MethodDescription>(paths.Select(p => FormateMethodDescription(p, models)).ToArray().OrderBy(md => md.Path)),
                 Models = models
             };
+        }
+
+        public static bool ShouldPublish(RestPath path)
+        {
+          return !PublishOnlyPublicApi || path.IsPublic;
         }
 
         private static readonly Dictionary<Type, string> ClrTypesToSwaggerScalarTypes = new Dictionary<Type, string> {

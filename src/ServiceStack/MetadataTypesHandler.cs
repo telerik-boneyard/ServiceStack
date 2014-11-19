@@ -163,6 +163,7 @@ namespace ServiceStack
                         Notes = x.Notes,
                         Summary = x.Summary,
                         Verbs = x.Verbs,
+                        IsPublic = x.IsPublic,
                     });
             }
 

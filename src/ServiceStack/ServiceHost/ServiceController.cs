@@ -159,7 +159,7 @@ namespace ServiceStack.ServiceHost
             var attrs = TypeDescriptor.GetAttributes(requestType).OfType<RouteAttribute>();
             foreach (RouteAttribute attr in attrs)
             {
-                var restPath = new RestPath(requestType, attr.Path, attr.Verbs, attr.Summary, attr.Notes);
+                var restPath = new RestPath(requestType, attr.Path, attr.Verbs, attr.Summary, attr.Notes, attr.IsPublic);
 
                 var defaultAttr = attr as FallbackRouteAttribute;
                 if (defaultAttr != null)

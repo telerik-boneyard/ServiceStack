@@ -111,6 +111,11 @@ namespace ServiceStack.ServiceHost
 		/// </value>
 		public string Verbs { get; set; }
 
+    /// <summary>
+    ///    Gets or sets whether this API method should be published by Swagger 
+    /// </summary>
+    public bool IsPublic { get; set; }
+
 #if NETFX_CORE || WINDOWS_PHONE || SILVERLIGHT
         /// <summary>
         /// Required when using a TypeDescriptor to make it unique
