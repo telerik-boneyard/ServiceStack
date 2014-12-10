@@ -89,7 +89,7 @@ namespace ServiceStack.Api.Swagger
             var paths = new List<string>();
             foreach (var key in map.Keys)
             {
-                paths.AddRange(map[key].Where(x => SwaggerApiService.ShouldPublish(x) && x.RequestType == operationType).Select(t => resourcePathCleanerRegex.Match(t.Path).Value));
+                paths.AddRange(map[key].Where(x => SwaggerApiService.ShouldPublish(Request, x) && x.RequestType == operationType).Select(t => resourcePathCleanerRegex.Match(t.Path).Value));
             }
 
             if (paths.Count == 0) return;

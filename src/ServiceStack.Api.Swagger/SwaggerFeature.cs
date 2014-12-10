@@ -13,6 +13,8 @@ namespace ServiceStack.Api.Swagger
 
         public bool PublishOnlyPublicApi { get; set; }
 
+        public string[] AllowFullApiForIpAddresses { get; set; }
+
         public bool UseCamelCaseModelPropertyNames { get; set; }
 
         public bool UseLowercaseUnderscoreModelPropertyNames { get; set; }
@@ -25,6 +27,7 @@ namespace ServiceStack.Api.Swagger
                 SwaggerResourcesService.resourceFilterRegex = new Regex(ResourceFilterPattern, RegexOptions.Compiled);
 
             SwaggerApiService.PublishOnlyPublicApi = PublishOnlyPublicApi;
+            SwaggerApiService.AllowFullApiForIpAddresses = AllowFullApiForIpAddresses ?? new string[0];
             SwaggerApiService.UseCamelCaseModelPropertyNames = UseCamelCaseModelPropertyNames;
             SwaggerApiService.UseLowercaseUnderscoreModelPropertyNames = UseLowercaseUnderscoreModelPropertyNames;
             SwaggerApiService.DisableAutoDtoInBodyParam = DisableAutoDtoInBodyParam;
