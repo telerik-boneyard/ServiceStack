@@ -138,6 +138,7 @@ namespace ServiceStack.Api.Swagger
     {
         internal static bool PublishOnlyPublicApi { get; set; }
         internal static string[] AllowFullApiForIpAddresses { get; set; }
+        internal static string BasePath { get; set; }
         internal static bool UseCamelCaseModelPropertyNames { get; set; }
         internal static bool UseLowercaseUnderscoreModelPropertyNames { get; set; }
         internal static bool DisableAutoDtoInBodyParam { get; set; }
@@ -151,7 +152,7 @@ namespace ServiceStack.Api.Swagger
             var map = EndpointHost.ServiceManager.ServiceController.RestPathMap;
             var paths = new List<RestPath>();
 
-            var basePath = EndpointHost.Config.WebHostUrl;
+            var basePath = BasePath ?? EndpointHost.Config.WebHostUrl;
             if (basePath == null)
             {
                 basePath = EndpointHost.Config.UseHttpsLinks
