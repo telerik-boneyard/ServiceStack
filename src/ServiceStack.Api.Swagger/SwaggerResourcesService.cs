@@ -56,6 +56,7 @@ namespace ServiceStack.Api.Swagger
                     ? Request.GetParentPathUrl().ToHttps()
                     : Request.GetParentPathUrl();
             }
+            basePath = SwaggerApiService.EnsureApplicationPathPrefix(basePath);
 
             var result = new ResourcesResponse
             {

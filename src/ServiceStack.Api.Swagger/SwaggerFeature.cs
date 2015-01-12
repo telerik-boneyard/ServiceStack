@@ -15,7 +15,9 @@ namespace ServiceStack.Api.Swagger
       
         public string[] AllowFullApiForIpAddresses { get; set; }
 
-        public string BasePath { get; set; }
+        public string ApplicationPathPrefix { get; set; }
+
+        public bool ForceUseHttps { get; set; }
 
         public bool UseCamelCaseModelPropertyNames { get; set; }
 
@@ -30,7 +32,8 @@ namespace ServiceStack.Api.Swagger
 
             SwaggerApiService.PublishOnlyPublicApi = PublishOnlyPublicApi;
             SwaggerApiService.AllowFullApiForIpAddresses = AllowFullApiForIpAddresses ?? new string[0];
-            SwaggerApiService.BasePath = BasePath;
+            SwaggerApiService.ApplicationPathPrefix = ApplicationPathPrefix;
+            SwaggerApiService.ForceUseHttps = ForceUseHttps;
             SwaggerApiService.UseCamelCaseModelPropertyNames = UseCamelCaseModelPropertyNames;
             SwaggerApiService.UseLowercaseUnderscoreModelPropertyNames = UseLowercaseUnderscoreModelPropertyNames;
             SwaggerApiService.DisableAutoDtoInBodyParam = DisableAutoDtoInBodyParam;

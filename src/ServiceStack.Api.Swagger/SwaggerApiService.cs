@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
+using ServiceStack.Common.Utils;
 using ServiceStack.Text;
 using ServiceStack.ServiceHost;
 using ServiceStack.WebHost.Endpoints;
@@ -138,7 +140,8 @@ namespace ServiceStack.Api.Swagger
     {
         internal static bool PublishOnlyPublicApi { get; set; }
         internal static string[] AllowFullApiForIpAddresses { get; set; }
-        internal static string BasePath { get; set; }
+        internal static string ApplicationPathPrefix { get; set; }
+        internal static bool ForceUseHttps { get; set; }
         internal static bool UseCamelCaseModelPropertyNames { get; set; }
         internal static bool UseLowercaseUnderscoreModelPropertyNames { get; set; }
         internal static bool DisableAutoDtoInBodyParam { get; set; }
@@ -152,13 +155,14 @@ namespace ServiceStack.Api.Swagger
             var map = EndpointHost.ServiceManager.ServiceController.RestPathMap;
             var paths = new List<RestPath>();
 
-            var basePath = BasePath ?? EndpointHost.Config.WebHostUrl;
+            var basePath = EndpointHost.Config.WebHostUrl;
             if (basePath == null)
             {
                 basePath = EndpointHost.Config.UseHttpsLinks
                     ? Common.StringExtensions.ToHttps(httpReq.GetParentPathUrl())
                     : httpReq.GetParentPathUrl();
             }
+            basePath = EnsureApplicationPathPrefix(basePath);
 
             if (basePath.EndsWith(SwaggerResourcesService.RESOURCE_PATH, StringComparison.OrdinalIgnoreCase))
             {
@@ -188,6 +192,22 @@ namespace ServiceStack.Api.Swagger
         public static bool ShouldPublish(IHttpRequest request, RestPath path)
         {
           return !PublishOnlyPublicApi || path.IsPublic || AllowFullApiForIpAddresses.Contains(request.UserHostAddress);
+        }
+
+        public static string EnsureApplicationPathPrefix(string basepath)
+        {
+          if (string.IsNullOrEmpty(ApplicationPathPrefix))
+            return basepath;
+
+          var uri = new Uri(basepath);
+          if (uri.LocalPath.StartsWith(ApplicationPathPrefix))
+            return basepath;
+
+          var bp = (ForceUseHttps ? "https" : uri.Scheme) + "://" + uri.Host;
+          if (uri.Port != 80)
+            bp += ":" + uri.Port;
+          basepath = PathUtils.CombinePaths(bp, ApplicationPathPrefix, uri.LocalPath);
+          return basepath;
         }
 
         private static readonly Dictionary<Type, string> ClrTypesToSwaggerScalarTypes = new Dictionary<Type, string> {
