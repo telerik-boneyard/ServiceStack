@@ -11,13 +11,7 @@ namespace ServiceStack.Api.Swagger
         /// </summary>
         public string ResourceFilterPattern { get; set; }
 
-        public bool PublishOnlyPublicApi { get; set; }
-      
-        public string[] AllowFullApiForIpAddresses { get; set; }
-
-        public string ApplicationPathPrefix { get; set; }
-
-        public bool ForceUseHttps { get; set; }
+        public SwaggerRuntimeBehavior RuntimeBehavior { get; set; }
 
         public bool UseCamelCaseModelPropertyNames { get; set; }
 
@@ -30,10 +24,7 @@ namespace ServiceStack.Api.Swagger
             if (ResourceFilterPattern != null)
                 SwaggerResourcesService.resourceFilterRegex = new Regex(ResourceFilterPattern, RegexOptions.Compiled);
 
-            SwaggerApiService.PublishOnlyPublicApi = PublishOnlyPublicApi;
-            SwaggerApiService.AllowFullApiForIpAddresses = AllowFullApiForIpAddresses ?? new string[0];
-            SwaggerApiService.ApplicationPathPrefix = ApplicationPathPrefix;
-            SwaggerApiService.ForceUseHttps = ForceUseHttps;
+            SwaggerApiService.RuntimeBehavior = RuntimeBehavior;
             SwaggerApiService.UseCamelCaseModelPropertyNames = UseCamelCaseModelPropertyNames;
             SwaggerApiService.UseLowercaseUnderscoreModelPropertyNames = UseLowercaseUnderscoreModelPropertyNames;
             SwaggerApiService.DisableAutoDtoInBodyParam = DisableAutoDtoInBodyParam;

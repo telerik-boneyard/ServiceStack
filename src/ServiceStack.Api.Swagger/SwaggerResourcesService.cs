@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Web;
 using ServiceStack.Common;
 using ServiceStack.Common.Extensions;
 using ServiceStack.ServiceHost;
@@ -56,7 +57,7 @@ namespace ServiceStack.Api.Swagger
                     ? Request.GetParentPathUrl().ToHttps()
                     : Request.GetParentPathUrl();
             }
-            basePath = SwaggerApiService.EnsureApplicationPathPrefix(basePath);
+            basePath = SwaggerApiService.EnsureApplicationPathPrefix(Request.OriginalRequest as HttpRequest, basePath);
 
             var result = new ResourcesResponse
             {

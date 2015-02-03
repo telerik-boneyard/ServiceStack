@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Policy;
 using System.Text.RegularExpressions;
+using System.Web;
 using ServiceStack.Common.Utils;
 using ServiceStack.Text;
 using ServiceStack.ServiceHost;
@@ -138,10 +139,7 @@ namespace ServiceStack.Api.Swagger
     [DefaultRequest(typeof(ResourceRequest))]
     public class SwaggerApiService : ServiceInterface.Service
     {
-        internal static bool PublishOnlyPublicApi { get; set; }
-        internal static string[] AllowFullApiForIpAddresses { get; set; }
-        internal static string ApplicationPathPrefix { get; set; }
-        internal static bool ForceUseHttps { get; set; }
+        internal static SwaggerRuntimeBehavior RuntimeBehavior { get; set; }
         internal static bool UseCamelCaseModelPropertyNames { get; set; }
         internal static bool UseLowercaseUnderscoreModelPropertyNames { get; set; }
         internal static bool DisableAutoDtoInBodyParam { get; set; }
@@ -162,7 +160,7 @@ namespace ServiceStack.Api.Swagger
                     ? Common.StringExtensions.ToHttps(httpReq.GetParentPathUrl())
                     : httpReq.GetParentPathUrl();
             }
-            basePath = EnsureApplicationPathPrefix(basePath);
+            basePath = EnsureApplicationPathPrefix(httpReq.OriginalRequest as HttpRequest, basePath);
 
             if (basePath.EndsWith(SwaggerResourcesService.RESOURCE_PATH, StringComparison.OrdinalIgnoreCase))
             {
@@ -191,22 +189,23 @@ namespace ServiceStack.Api.Swagger
 
         public static bool ShouldPublish(IHttpRequest request, RestPath path)
         {
-          return !PublishOnlyPublicApi || path.IsPublic || AllowFullApiForIpAddresses.Contains(request.UserHostAddress);
+          return path.IsPublic || RuntimeBehavior.AllowFullApi(request.OriginalRequest as HttpRequest);
         }
 
-        public static string EnsureApplicationPathPrefix(string basepath)
+        public static string EnsureApplicationPathPrefix(HttpRequest httpRequest, string basepath)
         {
-          if (string.IsNullOrEmpty(ApplicationPathPrefix))
+          var applicationPathPrefix = RuntimeBehavior.UseApplicationPathPrefix();
+          if (string.IsNullOrEmpty(applicationPathPrefix))
             return basepath;
 
           var uri = new Uri(basepath);
-          if (uri.LocalPath.StartsWith(ApplicationPathPrefix))
+          if (uri.LocalPath.StartsWith(applicationPathPrefix))
             return basepath;
 
-          var bp = (ForceUseHttps ? "https" : uri.Scheme) + "://" + uri.Host;
+          var bp = (RuntimeBehavior.ForceUseHttps(httpRequest) ? "https" : uri.Scheme) + "://" + uri.Host;
           if (uri.Port != 80)
             bp += ":" + uri.Port;
-          basepath = PathUtils.CombinePaths(bp, ApplicationPathPrefix, uri.LocalPath);
+          basepath = PathUtils.CombinePaths(bp, applicationPathPrefix, uri.LocalPath);
           return basepath;
         }
 
